@@ -29,6 +29,7 @@
 #include "applicationlauncher.h"
 
 #include <utils/fileutils.h>
+#include <qplaintextedit.h>
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;
@@ -38,7 +39,6 @@ class QToolButton;
 QT_END_NAMESPACE
 
 namespace Utils {
-class FancyLineEdit;
 class PathChooser;
 }
 
@@ -126,6 +126,7 @@ public:
     QString unexpandedArguments() const;
 
     void setArguments(const QString &arguments);
+    void processTextChanged();
 
 signals:
     void argumentsChanged(const QString &arguments);
@@ -135,7 +136,7 @@ private:
     void toMap(QVariantMap &map) const override;
 
     QString m_arguments;
-    QPointer<Utils::FancyLineEdit> m_chooser;
+    QPointer<QPlainTextEdit> m_chooser;
     QString m_key;
 };
 
