@@ -30,7 +30,6 @@
 #include "environmentaspect.h"
 
 #include <utils/utilsicons.h>
-#include <utils/fancylineedit.h>
 #include <utils/pathchooser.h>
 
 #include <QCheckBox>
@@ -280,8 +279,8 @@ void ArgumentsAspect::setArguments(const QString &arguments)
         m_arguments = arguments;
         emit argumentsChanged(arguments);
     }
-    if (m_chooser->text() != arguments)
-        m_chooser->setText(arguments);
+    if (m_chooser->toPlainText() != arguments)
+        m_chooser->setPlainText(arguments);
 }
 
 void ArgumentsAspect::fromMap(const QVariantMap &map)
@@ -304,14 +303,19 @@ ArgumentsAspect *ArgumentsAspect::clone(RunConfiguration *runConfig) const
     return new ArgumentsAspect(runConfig, m_key, m_arguments);
 }
 
+void ArgumentsAspect::processTextChanged()
+{
+    this->setArguments(m_chooser->toPlainText());
+}
+
 void ArgumentsAspect::addToMainConfigurationWidget(QWidget *parent, QFormLayout *layout)
 {
     QTC_CHECK(!m_chooser);
-    m_chooser = new FancyLineEdit(parent);
-    m_chooser->setHistoryCompleter(m_key);
-    m_chooser->setText(m_arguments);
 
-    connect(m_chooser.data(), &QLineEdit::textChanged, this, &ArgumentsAspect::setArguments);
+    m_chooser = new QPlainTextEdit(parent);
+    m_chooser->setPlainText(m_arguments);
+
+    connect(m_chooser.data(), &QPlainTextEdit::textChanged, this, &ArgumentsAspect::processTextChanged);
 
     layout->addRow(tr("Command line arguments:"), m_chooser);
 }
